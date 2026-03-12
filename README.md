@@ -85,11 +85,13 @@ GEMINI_API_KEY=your_api_key_here
 
 ### 問題 1
 
-問題：app.py 無法正常運行，會直接閃退或中止
+問題：app.py 無法正常運行
 
 解法：
 
-檢查是否安裝了 streamlit，未安裝請使用 pip install streamlit 安裝
+1. 檢查是否安裝了 streamlit，未安裝請使用 pip install streamlit 安裝
+2. 檢查是否安裝了 python interpreter，未安裝請使用搜尋 Python 官網，並根據作業系統下載對應安裝檔案
+3. 檢查是否安裝了 git，未安裝請使用搜尋 Git bash，並根據作業系統下載對應安裝檔案
 
 ### 問題 2
 
@@ -110,6 +112,13 @@ GEMINI_API_KEY=your_api_key_here
     ```
 
 ---
+
+### 問題 3
+
+問題: 無法 Git clone
+
+解法: 檢查是否安裝了 Git，未安裝請使用搜尋 Git bash，並根據作業系統下載對應安裝檔案
+
 
 ## 學習心得
 
