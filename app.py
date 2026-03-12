@@ -53,6 +53,9 @@ if "messages" not in st.session_state:
 if "edit_idx" not in st.session_state:
     st.session_state["edit_idx"] = None  # To track which message is being edited
 
+if "processed_file_id" not in st.session_state:
+    st.session_state["processed_file_id"] = None  # 追蹤已處理的上傳檔案，防止 rerun 重複送出
+
 # ── 輔助函式 ──────────────────────────────────────────────────────────────────
 HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "StreamHistory")
 os.makedirs(HISTORY_DIR, exist_ok=True)
@@ -268,15 +271,25 @@ if st.session_state["edit_idx"] is not None:
 user_prompt = None
 if "resubmit_text" in st.session_state:
     user_prompt = st.session_state.pop("resubmit_text")
-    # 如果觸發編輯重送，此時不會帶有新的檔案。直接重送文字。
     did_upload = False
 else:
-    user_prompt = st.chat_input("請輸入您的問題...")
-    did_upload = bool(uploaded_file)
-    
+    # 判斷是否有尚未處理的新上傳檔案
+    if uploaded_file is not None:
+        file_id = (uploaded_file.name, uploaded_file.size)
+        did_upload = (file_id != st.session_state["processed_file_id"])
+    else:
+        did_upload = False
 
-# 處理新發送的情境
-if user_prompt or did_upload:
+    # 若有待處理檔案，提示使用者輸入問題
+    if did_upload:
+        st.info(f"📎 **{uploaded_file.name}** 已就緒，請在下方輸入框輸入您的問題後送出。")
+
+    user_prompt = st.chat_input(
+        f"請輸入問題（附帶：{uploaded_file.name}）..." if did_upload else "請輸入您的問題..."
+    )
+
+# 只有使用者主動送出 prompt 才處理（不再因為純上傳就自動送出）
+if user_prompt:
     actual_prompt = user_prompt if user_prompt else ""
     
     human_msg_content = []
@@ -291,14 +304,12 @@ if user_prompt or did_upload:
         
         if file_type in ("jpg", "jpeg", "png"):
             # 圖片模式，Langchain 要 List[Dict]
-            st_text = actual_prompt if actual_prompt else "請描述這張圖片。"
-            human_msg_content = [{"type": "text", "text": st_text}, file_block]
-            export_text = f"{display_prefix} {st_text}"
+            human_msg_content = [{"type": "text", "text": actual_prompt}, file_block]
+            export_text = f"{display_prefix} {actual_prompt}"
         else:
             # 文字模式附加
-            st_text = actual_prompt if actual_prompt else "請摘要與分析這份文件。"
-            human_msg_content = f"{st_text}{file_block}"
-            export_text = f"{display_prefix} {st_text}"
+            human_msg_content = f"{actual_prompt}{file_block}"
+            export_text = f"{display_prefix} {actual_prompt}"
     else:
         human_msg_content = actual_prompt
         export_text = actual_prompt
@@ -333,5 +344,8 @@ if user_prompt or did_upload:
         "content": ai_content,
     })
     
+    # 標記此檔案已處理，防止下次 rerun 重複送出
+    if uploaded_file is not None:
+        st.session_state["processed_file_id"] = (uploaded_file.name, uploaded_file.size)
     st.rerun()
 
