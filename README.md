@@ -119,10 +119,11 @@ GEMINI_API_KEY=your_api_key_here
 
 目前，雖然是剛接觸 Git，但已經感受到版本控制與協作的重要性，我們總不能守著同一台電腦去做版本控制，更多時候是要以群組的形式進行協作。
 
-另外，我認為專案本身所提供的技術文件 `README.MD` 更是至關重要的一部分，
+另外，我認為專案本身所提供的技術文件 `README.MD` 更是至關重要的一部分，不僅省下大量閱讀程式碼的時間，更是輕而易舉的知道如何使用專案。
 
 ---
 
 ## GitHub 專案連結
 
-請填入小組各組員 GitHub repository 網址。
+### 黃柏豪
+https://github.com/LucioAlpha/chatbot_claude.git
