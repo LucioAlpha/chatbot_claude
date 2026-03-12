@@ -54,12 +54,15 @@ if "edit_idx" not in st.session_state:
     st.session_state["edit_idx"] = None  # To track which message is being edited
 
 # ── 輔助函式 ──────────────────────────────────────────────────────────────────
+HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "StreamHistory")
+os.makedirs(HISTORY_DIR, exist_ok=True)
+
 def get_timestamp() -> str:
     return datetime.now().isoformat()
 
 def get_json_files() -> list[str]:
-    """獲取當前目錄下的所有 chat_*.json 檔案"""
-    files = glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "chat_*.json"))
+    """獲取 StreamHistory 目錄下的所有 chat_*.json 檔案"""
+    files = glob.glob(os.path.join(HISTORY_DIR, "chat_*.json"))
     return sorted([os.path.basename(f) for f in files], reverse=True)
 
 def parse_base64_from_data_url(data_url: str) -> str:
@@ -115,7 +118,7 @@ def save_current_chat():
         return None
         
     filename = datetime.now().strftime("chat_%Y%m%d_%H%M%S.json")
-    filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    filepath = os.path.join(HISTORY_DIR, filename)
     
     data = {
         "model": "gemini-2.5-flash",
@@ -171,14 +174,23 @@ with st.sidebar:
     st.divider()
     
     # 對話控制開關
+    if st.button("📝 建立新對話", use_container_width=True, type="primary"):
+        # 先儲存當前對話
+        save_current_chat()
+        # 清空畫面與狀態
+        st.session_state["export_records"] = []
+        st.session_state["messages"] = [SystemMessage(content=st.session_state["system_prompt"])]
+        st.session_state["edit_idx"] = None
+        st.rerun()
+
     col1, col2 = st.columns(2)
-    if col1.button("🗑️ 清空對話"):
+    if col1.button("🗑️ 清空畫面(不存檔)"):
         st.session_state["export_records"] = []
         st.session_state["messages"] = [SystemMessage(content=st.session_state["system_prompt"])]
         st.session_state["edit_idx"] = None
         st.rerun()
         
-    if col2.button("💾 儲存紀錄"):
+    if col2.button("💾 手動儲存紀錄"):
         saved_file = save_current_chat()
         if saved_file:
             st.success(f"已儲存：{saved_file}")
@@ -194,7 +206,7 @@ with st.sidebar:
         selected_file = st.selectbox("選擇檔案", ["(請選擇)"] + json_files)
         if selected_file != "(請選擇)":
             if st.button("載入此紀錄"):
-                filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), selected_file)
+                filepath = os.path.join(HISTORY_DIR, selected_file)
                 if load_chat(filepath):
                     st.success("載入成功！")
                     st.rerun()
