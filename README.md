@@ -115,7 +115,9 @@ GEMINI_API_KEY=your_api_key_here
 
 ### 問題 3
 
-問題: 無法 Git clone
+問題: 無法 Git
+
+![giterror](/asset/imgs/giterror.png)
 
 解法: 檢查是否安裝了 Git，未安裝請使用搜尋 Git bash，並根據作業系統下載對應安裝檔案
 
