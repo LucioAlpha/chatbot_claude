@@ -28,13 +28,16 @@
 
 ## 執行方式
 
-1. 下載專案
-2. 
+1. 使用 git clone 下載專案
+2. 根據 requirements.txt 安裝依賴
+3. 使用 streamlit run app.py 執行專案
 
 範例指令：
 
 ```bash
 git clone https://github.com/LucioAlpha/chatbot_claude.git
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
 ---
@@ -44,7 +47,11 @@ git clone https://github.com/LucioAlpha/chatbot_claude.git
 請自行建立 `.env` 檔案，並填入自己的 API key。
 
 範例：
+1. 在 Google AI Studio 中，找到 API key
+2. 在根目錄中建立 `.env` 檔案
+3. 將 API key 複製到 `.env` 檔案中
 
+`.env` 檔案內容：
 ```env
 GEMINI_API_KEY=your_api_key_here
 ```
@@ -58,8 +65,9 @@ GEMINI_API_KEY=your_api_key_here
 
 ### 問題 2
 
-問題：
+問題：機器人未回應
 解法：
+1. 在 Google AI Studio 中，檢查 API KEY 是否正確
 
 ---
 

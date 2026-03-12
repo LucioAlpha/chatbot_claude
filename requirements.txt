@@ -1,0 +1,16 @@
+# Gemini 2.5 Flash 多模態聊天機器人 - 依賴套件
+# 適用於 app.py (Streamlit GUI) 與 chatbot.py (命令列版本)
+
+# Streamlit Web GUI（僅 app.py 需要）
+streamlit>=1.35.0
+
+# 環境變數讀取
+python-dotenv>=1.0.0
+
+# LangChain 核心套件
+langchain-core>=0.2.0
+langchain-community>=0.2.0
+langchain-google-genai>=1.0.0
+
+# PDF 解析（PyPDFLoader 底層依賴）
+pypdf>=4.0.0
